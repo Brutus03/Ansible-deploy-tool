@@ -30,7 +30,7 @@
     shell: |
       docker rm -f $(docker ps -a -q)
       docker rmi $(docker images -q)
-      cd /＜デプロイ資材のパス（資材の展開先）/
+      cd /＜デプロイ資材のパス（資材の展開先）＞
       /usr/local/bin/docker-compose up -d
     args:
       executable: /bin/bash
