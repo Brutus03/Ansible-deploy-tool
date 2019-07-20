@@ -1,0 +1,38 @@
+- hosts: <グループ名>
+  become: yes
+  tasks:
+
+  - name: file check
+    stat: path=＜デプロイ資材のパス＞
+    register: result
+
+  - name: move old file
+    vars:
+      now_date: "{{ lookup('pipe','date +%Y%m%d') }}"
+    command: mv /＜デプロイ資材のパス＞ /＜デプロイ資材のパス＞_{{ now_date }}
+    when: result.stat.exists 
+
+  - name: program copy
+    copy:
+      src: /＜デプロイ資材のパス＞
+      dest: /＜デプロイ資材のパス＞
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: file decompression 
+    unarchive:
+      src: /＜デプロイ資材のパス＞
+      dest: /＜デプロイ資材のパス＞
+      remote_src: yes
+
+  - name: docker compose start
+    shell: |
+      docker rm -f $(docker ps -a -q)
+      docker rmi $(docker images -q)
+      cd /＜デプロイ資材のパス（資材の展開先）/
+      /usr/local/bin/docker-compose up -d
+    args:
+      executable: /bin/bash
+
+  - debug: msg='Deployment is complete. Please visit https://＜デプロイしたアプリケーションのURL＞'
