@@ -1,4 +1,4 @@
-- hosts: <グループ名>
+- hosts: ＜グループ名＞
   become: yes
   tasks:
 
